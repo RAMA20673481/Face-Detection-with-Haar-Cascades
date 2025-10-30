@@ -53,3 +53,72 @@ iv) Perform face detection with label in real-time video from webcam.
 - Step 4: Display the video frame with rectangles around detected faces  
 - Step 5: Exit loop and close windows when ESC key (key code 27) is pressed  
 - Step 6: Release video capture and destroy all OpenCV windows  
+
+## PROGRAM
+```
+import cv2
+face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+image = cv2.imread('Passport.jpg')
+if image is None:
+    print("Error: Image not found.")
+else:
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5)
+    for (x, y, w, h) in faces:
+        cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
+    screen_res = 1920, 1080  # You can change this based on your screen
+    scale_width = screen_res[0] / image.shape[1]
+    scale_height = screen_res[1] / image.shape[0]
+    scale = min(scale_width, scale_height)
+    window_width = int(image.shape[1] * scale)
+    window_height = int(image.shape[0] * scale)
+    resized_image = cv2.resize(image, (window_width, window_height))
+    cv2.imshow('Detected Faces', resized_image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+```
+
+```
+import cv2
+import matplotlib.pyplot as plt
+def detect_face(frame):
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5)
+    for (x, y, w, h) in faces:
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
+    return frame
+face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+cap = cv2.VideoCapture(0)
+plt.ion()
+fig, ax = plt.subplots()
+ret, frame = cap.read()
+if not ret:
+    print("Error: Could not read from camera.")
+    cap.release()
+else:
+    frame = detect_face(frame)
+    im = ax.imshow(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+    plt.title('Video Face Detection')
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            print("Failed to capture frame.")
+            break
+
+        frame = detect_face(frame)
+        im.set_data(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+        plt.draw()
+        plt.pause(0.05)  
+
+cap.release()
+plt.close()
+```
+## OUTPUT
+
+<img width="1043" height="1142" alt="Screenshot 2025-10-30 105308" src="https://github.com/user-attachments/assets/00f92a35-0092-4608-bf4c-ec6103b1f33a" />
+
+
+<img width="730" height="544" alt="Screenshot 2025-10-30 111653" src="https://github.com/user-attachments/assets/b314836f-bf72-4efa-acfe-4eddf68d2fa5" />
+
+## RESULT
+Hence the program is completed successfully.
